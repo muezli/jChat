@@ -214,6 +214,7 @@ public class Server extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    //Method to log new client connections
     public static void newCon(String uname) {
         usr.add(uname);
         lmusr.addElement(uname);
@@ -222,8 +223,6 @@ public class Server extends javax.swing.JFrame {
     }
 
     public static void main(String args[]) {
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Server().setVisible(true);
@@ -232,6 +231,7 @@ public class Server extends javax.swing.JFrame {
         });
     }
 
+    //Method to log clients disconnecting
     public static void disCon(String user) {
         usr = Library.usr;
         lmusr.clear();
@@ -240,6 +240,7 @@ public class Server extends javax.swing.JFrame {
         txt_log.getCaret().setDot(Integer.MAX_VALUE);
     }
 
+    //Method to save chatlogs into .txt
     public static void saveLog(){
         try {
             DateTimeFormatter tdtf = DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss");
