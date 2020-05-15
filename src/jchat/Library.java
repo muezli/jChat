@@ -22,7 +22,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         msgq.add("\n[" + ctf.format(now) + "] " + msg);
     }
 
-    //new connected host
+    //Handle new connections
     @Override
     public int newcon(String uname, String ip) throws RemoteException {
         uname += " <" + ip + ">";
@@ -32,7 +32,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         return msgq.size();
     }
 
-    //server time
+    //Returns server time for logging
     @Override
     public String time() throws RemoteException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -40,25 +40,25 @@ public class Library extends UnicastRemoteObject implements RMIint {
         return dtf.format(now) + "";
     }
 
-    //returns user list
+    //Returns the plain user list
     @Override
     public ArrayList users() throws RemoteException {
         return usr;
     }
 
-    //returns specific message
+    //Returns a specific message from the message queue
     @Override
     public String msgret(int what) throws RemoteException {
         return msgq.get(what);
     }
 
-    //returns message queue length
+    //Returns the length of the message queue
     @Override
     public int size() throws RemoteException {
         return msgq.size();
     }
 
-    //remove user from user list
+    //Removes user from user list, adds new message
     @Override
     public void disconnect(String user) throws RemoteException {
         usr.remove(usr.indexOf(user));
