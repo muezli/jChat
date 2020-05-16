@@ -64,7 +64,6 @@ public class ChatLog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btn_okActionPerformed
 
-
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -85,7 +84,7 @@ public class ChatLog extends javax.swing.JDialog {
             }
         });
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Variables"> 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_ok;

@@ -114,16 +114,16 @@ public class ConM extends javax.swing.JDialog {
         int port = 0;
         String uname = "";
         String addr = "";
-        try{
+        try {
             port = Integer.parseInt(txt_port.getText());
             uname = txt_uname.getText();
             addr = txt_addr.getText();
             if (port < 1 || uname == "" || addr == "") {
                 throw new Exception();
             }
-            Client.setter(uname,addr,port);
+            Client.setter(uname, addr, port);
             this.dispose();
-        }catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Minden paraméter megadása kötelező!\nA port nagyobb mint nulla!", "Hiba", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -139,7 +139,7 @@ public class ConM extends javax.swing.JDialog {
                 ConM dialog = new ConM(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {                 
+                    public void windowClosing(java.awt.event.WindowEvent e) {
                         dialog.dispose();
                     }
                 });

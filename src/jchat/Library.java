@@ -28,7 +28,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         uname += " <" + ip + ">";
         usr.add(uname);
         Server.newCon(uname);
-        newmsg(uname+" csatlakozott.");
+        newmsg(uname + " csatlakozott.");
         return msgq.size();
     }
 
@@ -62,7 +62,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
     @Override
     public void disconnect(String user) throws RemoteException {
         usr.remove(usr.indexOf(user));
-        newmsg(user+" kilépett.");
+        newmsg(user + " kilépett.");
         Server.disCon(user);
     }
 

@@ -14,6 +14,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 public class Client extends javax.swing.JFrame {
+
     // <editor-fold defaultstate="collapsed" desc="Variables">
     static String uname;
     static String ser;
@@ -139,27 +140,19 @@ public class Client extends javax.swing.JFrame {
 
     private void txt_msgKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_msgKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER && btn_send.isEnabled()) {
-            try {
-                send();
-            } catch (RemoteException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            send();
         }
     }//GEN-LAST:event_txt_msgKeyPressed
 
     private void btn_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sendActionPerformed
-        try {
-            send();
-        } catch (RemoteException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        send();
     }//GEN-LAST:event_btn_sendActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
             rmi.disconnect(uname);
         } catch (RemoteException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            txt_main.append("Szerver elérési hiba!");
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -188,7 +181,7 @@ public class Client extends javax.swing.JFrame {
     //Connection manager with watcher
     public static void conMan() throws UnknownHostException {
         try {
-    //Connect to RMI server and get user list, generate full username
+            //Connect to RMI server and get user list, generate full username
             reg = LocateRegistry.getRegistry(ser, port);
             rmi = (RMIint) reg.lookup("newLib");
             String ip = Integer.toString(InetAddress.getLocalHost().hashCode());
@@ -197,8 +190,8 @@ public class Client extends javax.swing.JFrame {
             usr = rmi.users();
             lmusr.addAll(usr);
             txt_main.append("\n" + rmi.time() + "\nSikeresen csatlakozva: " + ser + ":" + port + " mint: " + uname);
-    
-    //Watcher to get messages from the message queue
+
+            //Watcher to get messages from the message queue
             watcher = new Thread() {
                 public void run() {
                     try {
@@ -217,16 +210,16 @@ public class Client extends javax.swing.JFrame {
                                 counter = size;
                             }
                             Thread.sleep(500);
-
                         }
-                    } catch (RemoteException | InterruptedException ex) {
+                    } catch (RemoteException ex) {
+                        txt_main.append("Szerver elérési hiba!");
+                    } catch (InterruptedException ex) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             };
             watcher.start();
             btn_send.setEnabled(true);
-
         } catch (RemoteException | NotBoundException ex) {
             JOptionPane.showMessageDialog(null, "Csatlakozási hiba!", "Hiba!", JOptionPane.ERROR_MESSAGE);
         }
@@ -234,11 +227,14 @@ public class Client extends javax.swing.JFrame {
     }
 
     //Method to send message
-    public void send() throws RemoteException {
+    public void send() {
         if (!txt_msg.getText().isEmpty()) {
-            
-            rmi.newmsg(uname + ": " + txt_msg.getText());
-            txt_msg.setText("");            
+            try {
+                rmi.newmsg(uname + ": " + txt_msg.getText());
+                txt_msg.setText("");
+            } catch (RemoteException ex) {
+                txt_main.append("Szerver elérési hiba!");
+            }
         }
     }
 

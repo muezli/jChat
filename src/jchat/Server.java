@@ -181,11 +181,6 @@ public class Server extends javax.swing.JFrame {
     private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
         //Unbinding registry
         //Doesn't stops already connected users
-        try {
-            reg.unbind("newLib");
-        } catch (RemoteException | NotBoundException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
         btn_start.setEnabled(!btn_start.isEnabled());
         btn_stop.setEnabled(!btn_stop.isEnabled());
         btn_log.setEnabled(!btn_log.isEnabled());
@@ -194,7 +189,13 @@ public class Server extends javax.swing.JFrame {
         txt_log.append("\n" + dtf.format(now) + "\nSzerver leállítva...\n");
         txt_log.getCaret().setDot(Integer.MAX_VALUE);
         watcher.interrupt();
+        Library.msgq.add("\n"+dtf.format(now)+" a szerver leáll.");
         saveLog();
+        try {
+            reg.unbind("newLib");
+        } catch (RemoteException | NotBoundException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_stopActionPerformed
 
     private void btn_logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logActionPerformed
@@ -209,6 +210,7 @@ public class Server extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         watcher.interrupt();
+        Library.msgq.add("\n"+dtf.format(now)+" a szerver leáll.");
         if (!Library.msgq.isEmpty()) {
             saveLog();
         }
