@@ -158,7 +158,7 @@ public class Server extends javax.swing.JFrame {
         //Naplózás kezdete
         now = LocalDateTime.now();
         txt_log.append("\n" + dtf.format(now) + "\nSzerver fut...\nHallgatás a " + port + " porton...\n");
-        Library.msgq.add(dtf.format(now) + "\nSzerver fut...\nHallgatás a " + port + " porton...\n");
+        Library.msgq.add("\n"+dtf.format(now) + " Szerver fut a " + port + " porton.");
         txt_log.getCaret().setDot(Integer.MAX_VALUE);
         
         //Figyelő fonál, ha nincs csatlakozott felhasználó üzenetnapló mentése
