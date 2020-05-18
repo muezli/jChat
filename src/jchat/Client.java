@@ -166,7 +166,7 @@ public class Client extends javax.swing.JFrame {
         });
     }
 
-    //Method to get variables from ConM form
+    //Átveszi a ConM változókat, meghívja aconMant
     public static void setter(String name, String addr, int por) {
         uname = name;
         ser = addr;
@@ -178,10 +178,10 @@ public class Client extends javax.swing.JFrame {
         }
     }
 
-    //Connection manager with watcher
+    //Connection manager
     public static void conMan() throws UnknownHostException {
         try {
-            //Connect to RMI server and get user list, generate full username
+            //Csatlakozás az RMI szezrverhez, user lista lekérése, teljes username legenerálása
             reg = LocateRegistry.getRegistry(ser, port);
             rmi = (RMIint) reg.lookup("newLib");
             String ip = Integer.toString(InetAddress.getLocalHost().hashCode());
@@ -191,7 +191,7 @@ public class Client extends javax.swing.JFrame {
             lmusr.addAll(usr);
             txt_main.append("\n" + rmi.time() + "\nSikeresen csatlakozva: " + ser + ":" + port + " mint: " + uname);
 
-            //Watcher to get messages from the message queue
+            //Figyelő fonál, üzenetek és user lista lekérése
             watcher = new Thread() {
                 public void run() {
                     try {
@@ -226,7 +226,7 @@ public class Client extends javax.swing.JFrame {
 
     }
 
-    //Method to send message
+    //Üzenetküldő eljárás
     public void send() {
         if (!txt_msg.getText().isEmpty()) {
             try {

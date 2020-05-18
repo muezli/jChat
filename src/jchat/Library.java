@@ -14,7 +14,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
     public Library() throws RemoteException {
     }
 
-    //new incoming message to the message queue
+    //Új bejövő üzenet
     @Override
     public void newmsg(String msg) throws RemoteException {
         DateTimeFormatter ctf = DateTimeFormatter.ofPattern("HH:mm");
@@ -22,7 +22,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         msgq.add("\n[" + ctf.format(now) + "] " + msg);
     }
 
-    //Handle new connections
+    //Új felhasználó csatlakozása
     @Override
     public int newcon(String uname, String ip) throws RemoteException {
         uname += " <" + ip + ">";
@@ -32,7 +32,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         return msgq.size();
     }
 
-    //Returns server time for logging
+    //Teljes dátum vissza adása
     @Override
     public String time() throws RemoteException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -40,25 +40,25 @@ public class Library extends UnicastRemoteObject implements RMIint {
         return dtf.format(now) + "";
     }
 
-    //Returns the plain user list
+    //User lista vissza adása
     @Override
     public ArrayList users() throws RemoteException {
         return usr;
     }
 
-    //Returns a specific message from the message queue
+    //Egy üzenet vissza adása
     @Override
     public String msgret(int what) throws RemoteException {
         return msgq.get(what);
     }
 
-    //Returns the length of the message queue
+    //Üzenetlista hosszának vissza adása
     @Override
     public int size() throws RemoteException {
         return msgq.size();
     }
 
-    //Removes user from user list, adds new message
+    //Felhasználó kiléptetése a listából, üzenet a kilépésről
     @Override
     public void disconnect(String user) throws RemoteException {
         usr.remove(usr.indexOf(user));

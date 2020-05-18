@@ -75,7 +75,7 @@ public class ChatLog extends javax.swing.JDialog {
                         dialog.dispose();
                     }
                 });
-                //args array contains the messages
+                //args array tartalmazza az üzeneteket
                 for (int i = 0; i < args.length; i++) {
                     txt_chat.append(args[i]);
                 }

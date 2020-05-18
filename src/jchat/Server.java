@@ -142,25 +142,26 @@ public class Server extends javax.swing.JFrame {
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
         port = Integer.parseInt(txt_port.getText());
-        //Create new registry
+        //Új registry
         try {
             reg = LocateRegistry.createRegistry(port);
             reg.rebind("newLib", new Library());
         } catch (RemoteException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //enable and disable buttons and textfields
+
         btn_start.setEnabled(!btn_start.isEnabled());
         btn_stop.setEnabled(!btn_stop.isEnabled());
         btn_log.setEnabled(!btn_log.isEnabled());
         txt_port.setEnabled(false);
 
-        //Start of logging
+        //Naplózás kezdete
         now = LocalDateTime.now();
         txt_log.append("\n" + dtf.format(now) + "\nSzerver fut...\nHallgatás a " + port + " porton...\n");
+        Library.msgq.add(dtf.format(now) + "\nSzerver fut...\nHallgatás a " + port + " porton...\n");
         txt_log.getCaret().setDot(Integer.MAX_VALUE);
         
-        //Watcher thread for emptying the message queue
+        //Figyelő fonál, ha nincs csatlakozott felhasználó üzenetnapló mentése
         watcher = new Thread() {
             public void run() {
                 while(true){
@@ -180,7 +181,6 @@ public class Server extends javax.swing.JFrame {
 
     private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
         //Unbinding registry
-        //Doesn't stops already connected users
         btn_start.setEnabled(!btn_start.isEnabled());
         btn_stop.setEnabled(!btn_stop.isEnabled());
         btn_log.setEnabled(!btn_log.isEnabled());
@@ -199,12 +199,12 @@ public class Server extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_stopActionPerformed
 
     private void btn_logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logActionPerformed
-        //Message queue into array
+        //Message queue tömbbe
         String[] tmp = new String[Library.msgq.size()];
         for (int i = 0; i < Library.msgq.size(); i++) {
             tmp[i] = Library.msgq.get(i);
         }
-        //Chatlog dialog call -> messages into args array
+        //Chatlognak átadja az üzenetlistát
         ChatLog.main(tmp);
     }//GEN-LAST:event_btn_logActionPerformed
 
@@ -216,7 +216,7 @@ public class Server extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
-    //Method to log new client connections
+    //Új kliens csatlakozása
     public static void newCon(String uname) {
         usr.add(uname);
         lmusr.addElement(uname);
@@ -233,7 +233,7 @@ public class Server extends javax.swing.JFrame {
         });
     }
 
-    //Method to log clients disconnecting
+    //Kliens kilépése
     public static void disCon(String user) {
         usr = Library.usr;
         lmusr.clear();
@@ -242,7 +242,7 @@ public class Server extends javax.swing.JFrame {
         txt_log.getCaret().setDot(Integer.MAX_VALUE);
     }
 
-    //Method to save chatlogs into .txt
+    //Üzenetnapló mentése fájlba
     public static void saveLog(){
         try {
             DateTimeFormatter tdtf = DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss");
