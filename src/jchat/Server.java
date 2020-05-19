@@ -209,10 +209,14 @@ public class Server extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_logActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        watcher.interrupt();
-        Library.msgq.add("\n"+dtf.format(now)+" a szerver leáll.");
-        if (!Library.msgq.isEmpty()) {
-            saveLog();
+        try{
+            watcher.interrupt();
+            Library.msgq.add("\n"+dtf.format(now)+" a szerver leáll.");
+            if (!Library.msgq.isEmpty()) {
+                saveLog();
+            }
+        }catch(Exception e){
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_formWindowClosing
 

@@ -1,0 +1,18 @@
+
+[17:16] teszt <-1062731511> csatlakozott.
+
+[17:16] teszt123 <-1062731511> csatlakozott.
+
+[17:16] teszt123 <-1062731511> kilépett.
+
+[17:16] teszt321 <-1062731511> csatlakozott.
+
+[17:17] teszt321 <-1062731511> kilépett.
+
+[17:17] tesztasf <-1062731511> csatlakozott.
+
+[17:17] tesztasf <-1062731511> kilépett.
+
+[17:17] teszt <-1062731511> kilépett.
+
+2020/05/19 17:16:14 a szerver leáll.

@@ -1,0 +1,20 @@
+
+[16:48] teszt <-1062731511> csatlakozott.
+
+[16:48] teszt <-1062731511> csatlakozott.
+
+[16:48] teszt <-1062731511> kilépett.
+
+[16:48] afsfasf <-1062731511> csatlakozott.
+
+[16:48] afsfasf <-1062731511>: asf
+
+[16:48] teszt <-1062731511>: a
+
+[16:48] teszt <-1062731511>: asf
+
+[16:49] teszt <-1062731511> kilépett.
+
+[16:49] afsfasf <-1062731511> kilépett.
+
+2020/05/19 16:48:34 a szerver leáll.

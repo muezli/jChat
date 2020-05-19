@@ -1,0 +1,6 @@
+
+[17:20] teszt123 <-1062731511> csatlakozott.
+
+[17:20] teszt123 <-1062731511> kilépett.
+
+2020/05/19 17:20:40 a szerver leáll.

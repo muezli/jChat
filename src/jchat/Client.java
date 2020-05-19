@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 public class Client extends javax.swing.JFrame {
@@ -22,10 +23,11 @@ public class Client extends javax.swing.JFrame {
     static Registry reg;
     static RMIint rmi;
     static int counter;
-    public String msg;
     static ArrayList<String> usr = new ArrayList<>();
     static DefaultListModel<String> lmusr = new DefaultListModel<>();
     static Thread watcher;
+    static Thread pmWatcher;
+    static ArrayList<Integer> activePm = new ArrayList<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Create new form Client">
@@ -67,6 +69,11 @@ public class Client extends javax.swing.JFrame {
 
         list_usr.setModel(lmusr);
         list_usr.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        list_usr.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                list_usrMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(list_usr);
 
         txt_msg.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -156,6 +163,22 @@ public class Client extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void list_usrMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list_usrMouseClicked
+        if (evt.getClickCount() == 2) {
+            try {
+                String to = usr.get(list_usr.locationToIndex(evt.getPoint()));
+                if (!rmi.pmPairExists(uname, to)) {
+                    int refId = rmi.newPmReq(uname, to);
+                    String[] tmp = {Integer.toString(port),ser,Integer.toString(refId),uname,"s"};
+                    activePm.add(refId);
+                    PrivateMsg.main(tmp);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_list_usrMouseClicked
+
     public static void main(String args[]) {
 
         /* Create and display the form */
@@ -185,40 +208,71 @@ public class Client extends javax.swing.JFrame {
             reg = LocateRegistry.getRegistry(ser, port);
             rmi = (RMIint) reg.lookup("newLib");
             String ip = Integer.toString(InetAddress.getLocalHost().hashCode());
-            counter = rmi.newcon(uname, ip);
+            counter = rmi.newCon(uname, ip);
             uname += " <" + ip + ">";
-            usr = rmi.users();
+            usr = rmi.getUsers();
             lmusr.addAll(usr);
-            txt_main.append("\n" + rmi.time() + "\nSikeresen csatlakozva: " + ser + ":" + port + " mint: " + uname);
+            txt_main.append("\n" + rmi.getTime() + "\nSikeresen csatlakozva: " + ser + ":" + port + " mint: " + uname);
 
             //Figyelő fonál, üzenetek és user lista lekérése
             watcher = new Thread() {
                 public void run() {
                     try {
                         while (true) {
-                            if (rmi.users().size() != usr.size()) {
-                                usr = rmi.users();
-                                lmusr.clear();
+                            if (rmi.getUsers().size() != usr.size()) {
+                                usr.clear();
+                                usr = rmi.getUsers();
+                                lmusr.removeAllElements();
                                 lmusr.addAll(usr);
                             }
-                            int size = rmi.size();
+                            int size = rmi.msgSize();
+                            
                             if (counter < size) {
                                 for (int i = counter; i < size; i++) {
-                                    txt_main.append(rmi.msgret(counter));
+                                    txt_main.append(rmi.getMsg(i));
                                     txt_main.getCaret().setDot(Integer.MAX_VALUE);
                                 }
                                 counter = size;
                             }
+
                             Thread.sleep(500);
                         }
                     } catch (RemoteException ex) {
-                        txt_main.append("Szerver elérési hiba!");
+                        txt_main.append("\nSzerver elérési hiba!");
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            };
+            
+            pmWatcher = new Thread(){
+                public void run(){                            
+                    try {
+                        while(true){
+                            ArrayList<Integer> tmp = rmi.checkPm(uname);
+                            if (tmp.isEmpty()) {
+                                Thread.sleep(1000);
+                            }
+                            if (!activePm.containsAll(tmp)) {
+                                tmp.removeAll(activePm);
+                                String p = Integer.toString(port);
+                                for (Integer integer : tmp) {
+                                    String[] a = {p,ser,integer.toString(),uname,"r"};
+                                    PrivateMsg.main(a);
+                                }
+                                activePm.addAll(tmp);
+                            }
+                            Thread.sleep(1000);
+                        }
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             };
             watcher.start();
+            pmWatcher.start();
             btn_send.setEnabled(true);
         } catch (RemoteException | NotBoundException ex) {
             JOptionPane.showMessageDialog(null, "Csatlakozási hiba!", "Hiba!", JOptionPane.ERROR_MESSAGE);
@@ -230,10 +284,10 @@ public class Client extends javax.swing.JFrame {
     public void send() {
         if (!txt_msg.getText().isEmpty()) {
             try {
-                rmi.newmsg(uname + ": " + txt_msg.getText());
+                rmi.newMsg(uname + ": " + txt_msg.getText());
                 txt_msg.setText("");
             } catch (RemoteException ex) {
-                txt_main.append("Szerver elérési hiba!");
+                txt_main.append("\nSzerver elérési hiba!");
             }
         }
     }
