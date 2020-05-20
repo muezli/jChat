@@ -31,11 +31,17 @@ public interface RMIint extends Remote {
     int getPmSize(int refId) throws RemoteException;
 
     void pmClose(int refId) throws RemoteException;
+    
+    void pmDc(int refId, boolean sender) throws RemoteException;
 
+    String getSenStat(int refId) throws RemoteException;
+
+    String getRecStat(int refId) throws RemoteException;
+    
     String getSen(int refId) throws RemoteException;
 
     String getRec(int refId) throws RemoteException;
-    
+        
     void pmCon(int refId) throws RemoteException;
     
     boolean pmPairExists(String from, String to) throws RemoteException;

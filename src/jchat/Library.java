@@ -69,6 +69,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         Server.disCon(user);
     }
 
+    //Adott username indexeinek visszadása 
     @Override
     public ArrayList<Integer> checkPm(String user) throws RemoteException {
         ArrayList<Integer> a = new ArrayList<>();
@@ -87,20 +88,25 @@ public class Library extends UnicastRemoteObject implements RMIint {
     @Override
     public int newPmReq(String from, String to) throws RemoteException {
         int tmp = pmSen.size();
-        String[] f = {from,"1"};
-        String[] t = {to,"0"};
-        pmSen.add(tmp, f);
-        pmRec.add(tmp, t);
+        String[] f = {from, "1"};
+        String[] t = {to, "0"};
+        /*pmSen.add(tmp, f);
+        pmRec.add(tmp, t);*/
+        pmSen.add(f);
+        pmRec.add(t);
         ArrayList<String> a = new ArrayList<>();
-        pms.add(tmp, a);        
+        //pms.add(tmp, a);
+        pms.add(a);
         return tmp;
     }
 
+    //Priv. üzenet visszaadása
     @Override
     public String getPm(int refId, int what) throws RemoteException {
         return (String) (pms.get(refId).get(what));
     }
 
+    //Priv. besz. hosszának visszaadása
     @Override
     public int getPmSize(int refId) throws RemoteException {
         return pms.get(refId).size();
@@ -111,7 +117,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
     public void newPm(String msg, int refId) throws RemoteException {
         DateTimeFormatter ctf = DateTimeFormatter.ofPattern("HH:mm");
         LocalDateTime now = LocalDateTime.now();
-        pms.get(refId).add("\n["+ctf.format(now)+"] "+msg);
+        pms.get(refId).add("\n[" + ctf.format(now) + "] " + msg);
     }
 
     //Privát beszélgetés megszüntetése
@@ -122,17 +128,41 @@ public class Library extends UnicastRemoteObject implements RMIint {
         pms.remove(refId);
     }
 
-    
+    //Kiléptetés pm.-ből
     @Override
-    public String getSen(int refId) throws RemoteException {
+    public void pmDc(int refId, boolean sender) throws RemoteException {
+        if (sender) {
+            pmSen.get(refId)[1] = "0";
+        } else {
+            pmRec.get(refId)[1] = "0";
+        }
+    }
+
+    //Küldő státusz
+    @Override
+    public String getSenStat(int refId) throws RemoteException {
         return pmSen.get(refId)[1];
     }
 
+    //Fogadó státusz
     @Override
-    public String getRec(int refId) throws RemoteException {
+    public String getRecStat(int refId) throws RemoteException {
         return pmRec.get(refId)[1];
     }
 
+    //Küldő username
+    @Override
+    public String getSen(int refId) throws RemoteException {
+        return pmSen.get(refId)[0];
+    }
+
+    //Fogadó username
+    @Override
+    public String getRec(int refId) throws RemoteException {
+        return pmRec.get(refId)[0];
+    }
+
+    //Priv. besz. becsatl.
     @Override
     public void pmCon(int refId) throws RemoteException {
         String[] tmp = pmRec.get(refId);
@@ -140,6 +170,7 @@ public class Library extends UnicastRemoteObject implements RMIint {
         pmRec.set(refId, tmp);
     }
 
+    //Priv. pár. létezik-e már
     @Override
     public boolean pmPairExists(String from, String to) throws RemoteException {
         for (int i = 0; i < pmRec.size(); i++) {

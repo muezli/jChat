@@ -20,10 +20,12 @@ public class PrivateMsg extends javax.swing.JFrame {
     static int counter;
     static ArrayList<String> users = new ArrayList<>();
     static Thread watcher;
+    static String title;
 
     public PrivateMsg() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setTitle(title);
     }
 
     @SuppressWarnings("unchecked")
@@ -44,6 +46,7 @@ public class PrivateMsg extends javax.swing.JFrame {
 
         txt_main.setColumns(20);
         txt_main.setRows(5);
+        txt_main.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txt_main.setEnabled(false);
         jScrollPane1.setViewportView(txt_main);
 
@@ -101,13 +104,14 @@ public class PrivateMsg extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
-            if ((sender && rmi.getRec(refId) == "0") || (!sender && rmi.getSen(refId) == "0")) {
+            rmi.pmDc(refId, sender);
+            if ((sender && rmi.getRecStat(refId) == "0") || (!sender && rmi.getSenStat(refId) == "0")) {
                 rmi.pmClose(refId);
             }
         } catch (RemoteException ex) {
             Logger.getLogger(PrivateMsg.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Client.activePm.remove(Client.activePm.get(refId));
+        Client.activePm.remove(Client.activePm.indexOf(refId));
     }//GEN-LAST:event_formWindowClosing
     //port,server,refID,uname,s/r
     public static void main(String args[]) {
@@ -116,12 +120,12 @@ public class PrivateMsg extends javax.swing.JFrame {
         refId = Integer.parseInt(args[2]);
         uname = args[3];
         sender = args[4] == "s" ? true : false;
+        conM();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PrivateMsg().setVisible(true);
             }
         });
-        conM();
     }
 
     private static void conM() {
@@ -129,8 +133,11 @@ public class PrivateMsg extends javax.swing.JFrame {
             reg = LocateRegistry.getRegistry(ser, port);
             rmi = (RMIint) reg.lookup("newLib");
 
-            if (!sender) {
+            if (sender){
+                title = "PM : " + rmi.getRec(refId);
+            }else{
                 rmi.pmCon(refId);
+                title = "PM : " + rmi.getSen(refId);
             }
             counter = 0;
             watcher = new Thread() {

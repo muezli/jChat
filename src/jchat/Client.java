@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 public class Client extends javax.swing.JFrame {
@@ -28,6 +27,7 @@ public class Client extends javax.swing.JFrame {
     static Thread watcher;
     static Thread pmWatcher;
     static ArrayList<Integer> activePm = new ArrayList<>();
+    static ArrayList<Integer> aPmHelper = new ArrayList<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Create new form Client">
@@ -167,10 +167,11 @@ public class Client extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) {
             try {
                 String to = usr.get(list_usr.locationToIndex(evt.getPoint()));
-                if (!rmi.pmPairExists(uname, to)) {
+                if (!rmi.pmPairExists(uname, to) && to != uname) {
                     int refId = rmi.newPmReq(uname, to);
                     String[] tmp = {Integer.toString(port),ser,Integer.toString(refId),uname,"s"};
                     activePm.add(refId);
+                    aPmHelper.add(refId);
                     PrivateMsg.main(tmp);
                 }
             } catch (RemoteException ex) {
@@ -257,10 +258,14 @@ public class Client extends javax.swing.JFrame {
                                 tmp.removeAll(activePm);
                                 String p = Integer.toString(port);
                                 for (Integer integer : tmp) {
-                                    String[] a = {p,ser,integer.toString(),uname,"r"};
-                                    PrivateMsg.main(a);
+                                    if (!aPmHelper.contains(integer)) {
+                                        aPmHelper.add(integer);
+                                        String[] a = {p,ser,integer.toString(),uname,"r"};
+                                        PrivateMsg.main(a);
+                                    }
                                 }
                                 activePm.addAll(tmp);
+
                             }
                             Thread.sleep(1000);
                         }
