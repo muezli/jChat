@@ -21,6 +21,7 @@ public class PrivateMsg extends javax.swing.JFrame {
     static ArrayList<String> users = new ArrayList<>();
     static Thread watcher;
     static String title;
+    static String h;
 
     public PrivateMsg() {
         initComponents();
@@ -134,10 +135,12 @@ public class PrivateMsg extends javax.swing.JFrame {
             rmi = (RMIint) reg.lookup("newLib");
 
             if (sender){
-                title = "PM : " + rmi.getRec(refId);
+                h = rmi.getRec(refId);
+                title = "PM : " + h;
             }else{
                 rmi.pmCon(refId);
-                title = "PM : " + rmi.getSen(refId);
+                h = rmi.getSen(refId);
+                title = "PM : " + h;
             }
             counter = 0;
             watcher = new Thread() {
@@ -167,11 +170,13 @@ public class PrivateMsg extends javax.swing.JFrame {
     }
 
     public static void sender() {
-        try {
-            rmi.newPm(uname + ": " + txt_msg.getText(), refId);
-            txt_msg.setText("");
-        } catch (RemoteException ex) {
-            Logger.getLogger(PrivateMsg.class.getName()).log(Level.SEVERE, null, ex);
+        if (!txt_msg.getText().isEmpty()) {
+            try {                
+                rmi.newPm(uname + ": " + txt_msg.getText(), refId);
+                txt_msg.setText("");
+            } catch (RemoteException ex) {
+                Logger.getLogger(PrivateMsg.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

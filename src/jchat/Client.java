@@ -28,6 +28,7 @@ public class Client extends javax.swing.JFrame {
     static Thread pmWatcher;
     static ArrayList<Integer> activePm = new ArrayList<>();
     static ArrayList<Integer> aPmHelper = new ArrayList<>();
+    static ArrayList<String> currPm = new ArrayList<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Create new form Client">
@@ -167,11 +168,12 @@ public class Client extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) {
             try {
                 String to = usr.get(list_usr.locationToIndex(evt.getPoint()));
-                if (!rmi.pmPairExists(uname, to) && to != uname) {
+                if (/*!rmi.pmPairExists(uname, to) &&*/ to != uname) {
                     int refId = rmi.newPmReq(uname, to);
                     String[] tmp = {Integer.toString(port),ser,Integer.toString(refId),uname,"s"};
                     activePm.add(refId);
                     aPmHelper.add(refId);
+                    currPm.add(to);
                     PrivateMsg.main(tmp);
                 }
             } catch (RemoteException ex) {
@@ -265,6 +267,9 @@ public class Client extends javax.swing.JFrame {
                                     }
                                 }
                                 activePm.addAll(tmp);
+                                if (activePm.size()<aPmHelper.size()) {
+                                    
+                                }
 
                             }
                             Thread.sleep(1000);
