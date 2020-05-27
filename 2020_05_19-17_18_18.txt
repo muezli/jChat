@@ -1,6 +1,0 @@
-
-[17:18] teszt <-1062731511> csatlakozott.
-
-[17:18] teszt <-1062731511> kilépett.
-
-2020/05/19 17:18:18 a szerver leáll.
